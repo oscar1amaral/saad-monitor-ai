@@ -9,15 +9,17 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ timeline, tasks, insights }) => {
-  
+
   // Calculate Progress
   const totalTasks = tasks.length;
-  
-  const devDoneCount = tasks.filter(t => 
-    t.column === ColumnType.DEPLOY_DEV || t.column === ColumnType.DEPLOY_PROD
+
+  const devDoneCount = tasks.filter(t =>
+    t.column === ColumnType.DEPLOY_DEV ||
+    t.column === ColumnType.TESTING ||
+    t.column === ColumnType.DEPLOY_PROD
   ).length;
 
-  const prodDoneCount = tasks.filter(t => 
+  const prodDoneCount = tasks.filter(t =>
     t.column === ColumnType.DEPLOY_PROD
   ).length;
 
@@ -27,8 +29,8 @@ const Dashboard: React.FC<DashboardProps> = ({ timeline, tasks, insights }) => {
   // Time Progress
   let timeProgress = 0;
   if (timeline) {
-     // Simple linear assumption: Current Week / Total Weeks
-     timeProgress = Math.min(100, Math.round((timeline.currentWeek / timeline.totalWeeks) * 100));
+    // Simple linear assumption: Current Week / Total Weeks
+    timeProgress = Math.min(100, Math.round((timeline.currentWeek / timeline.totalWeeks) * 100));
   }
 
   // Health Score Calculation (Mock Logic)
@@ -58,25 +60,25 @@ const Dashboard: React.FC<DashboardProps> = ({ timeline, tasks, insights }) => {
             </p>
           </div>
           <div className={`flex flex-col items-end`}>
-             <span className="text-xs text-gray-400 mb-1">SAÚDE DO PROJETO</span>
-             <span className={`text-2xl font-black ${healthScore >= 90 ? 'text-brand-green' : healthScore >= 70 ? 'text-yellow-500' : 'text-red-500'}`}>
-               {healthScore}
-             </span>
+            <span className="text-xs text-gray-400 mb-1">SAÚDE DO PROJETO</span>
+            <span className={`text-2xl font-black ${healthScore >= 90 ? 'text-brand-green' : healthScore >= 70 ? 'text-yellow-500' : 'text-red-500'}`}>
+              {healthScore}
+            </span>
           </div>
         </div>
-        
+
         {/* Progress Bar for Time */}
         <div className="mt-4">
-            <div className="flex justify-between text-xs text-gray-400 mb-1">
-                <span>Tempo Decorrido</span>
-                <span>{timeProgress}%</span>
-            </div>
-            <div className="w-full bg-brand-base h-2 rounded-full border border-brand-light/30">
-                <div 
-                    className="bg-brand-green h-2 rounded-full transition-all duration-500" 
-                    style={{ width: `${timeProgress}%` }}
-                ></div>
-            </div>
+          <div className="flex justify-between text-xs text-gray-400 mb-1">
+            <span>Tempo Decorrido</span>
+            <span>{timeProgress}%</span>
+          </div>
+          <div className="w-full bg-brand-base h-2 rounded-full border border-brand-light/30">
+            <div
+              className="bg-brand-green h-2 rounded-full transition-all duration-500"
+              style={{ width: `${timeProgress}%` }}
+            ></div>
+          </div>
         </div>
       </div>
 
@@ -87,33 +89,33 @@ const Dashboard: React.FC<DashboardProps> = ({ timeline, tasks, insights }) => {
             <Rocket size={16} /> Status de Entrega
           </h3>
         </div>
-        
-        <div className="space-y-6">
-            <div>
-                <div className="flex justify-between items-end mb-2">
-                    <span className="text-sm text-gray-300">Progresso Dev</span>
-                    <span className="text-xl font-bold text-white">{devProgress}%</span>
-                </div>
-                <div className="w-full bg-brand-base h-2 rounded-full border border-brand-light/30">
-                    <div 
-                        className="bg-blue-400 h-2 rounded-full transition-all duration-500" 
-                        style={{ width: `${devProgress}%` }}
-                    ></div>
-                </div>
-            </div>
 
-            <div>
-                <div className="flex justify-between items-end mb-2">
-                    <span className="text-sm text-gray-300">Progresso Produção</span>
-                    <span className="text-xl font-bold text-brand-green">{prodProgress}%</span>
-                </div>
-                <div className="w-full bg-brand-base h-2 rounded-full border border-brand-light/30">
-                    <div 
-                        className="bg-brand-green h-2 rounded-full transition-all duration-500" 
-                        style={{ width: `${prodProgress}%` }}
-                    ></div>
-                </div>
+        <div className="space-y-6">
+          <div>
+            <div className="flex justify-between items-end mb-2">
+              <span className="text-sm text-gray-300">Progresso Dev</span>
+              <span className="text-xl font-bold text-white">{devProgress}%</span>
             </div>
+            <div className="w-full bg-brand-base h-2 rounded-full border border-brand-light/30">
+              <div
+                className="bg-blue-400 h-2 rounded-full transition-all duration-500"
+                style={{ width: `${devProgress}%` }}
+              ></div>
+            </div>
+          </div>
+
+          <div>
+            <div className="flex justify-between items-end mb-2">
+              <span className="text-sm text-gray-300">Progresso Produção</span>
+              <span className="text-xl font-bold text-brand-green">{prodProgress}%</span>
+            </div>
+            <div className="w-full bg-brand-base h-2 rounded-full border border-brand-light/30">
+              <div
+                className="bg-brand-green h-2 rounded-full transition-all duration-500"
+                style={{ width: `${prodProgress}%` }}
+              ></div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -127,15 +129,15 @@ const Dashboard: React.FC<DashboardProps> = ({ timeline, tasks, insights }) => {
         <div className="space-y-3">
           {insights.length > 0 ? (
             insights.map((insight, idx) => (
-               <div key={idx} className="pl-3 border-l-2 border-brand-green">
-                  <p className="text-sm text-gray-200 italic">"{insight}"</p>
-               </div>
+              <div key={idx} className="pl-3 border-l-2 border-brand-green">
+                <p className="text-sm text-gray-200 italic">"{insight}"</p>
+              </div>
             ))
           ) : (
             <div className="pl-3 border-l-2 border-brand-light">
-                <p className="text-sm text-gray-400 italic">
-                    Digite suas tarefas no chat para gerar o cronograma inicial e insights...
-                </p>
+              <p className="text-sm text-gray-400 italic">
+                Digite suas tarefas no chat para gerar o cronograma inicial e insights...
+              </p>
             </div>
           )}
         </div>

@@ -16,14 +16,22 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ timeline, tasks, 
     const squadMetrics = squads.map(squad => {
         const squadTasks = tasks.filter(t => t.squad === squad || (!t.squad && squad === 'Geral'));
         const total = squadTasks.length;
-        const done = squadTasks.filter(t => t.column === ColumnType.DEPLOY_PROD).length;
+        // Count as "done" for squad health if it's in Dev, Testing or Prod (as requested by user for Dev Progress)
+        const done = squadTasks.filter(t =>
+            t.column === ColumnType.DEPLOY_DEV ||
+            t.column === ColumnType.TESTING ||
+            t.column === ColumnType.DEPLOY_PROD
+        ).length;
         const progress = total === 0 ? 0 : Math.round((done / total) * 100);
         return { squad, total, done, progress };
     });
 
-    // 2. Global Progress
-    const totalTasks = tasks.length;
-    const globalDone = tasks.filter(t => t.column === ColumnType.DEPLOY_PROD).length;
+    // 2. Global Progress (Based on the same "Dev+Test+Prod" logic for consistent dashboard feedback)
+    const globalDone = tasks.filter(t =>
+        t.column === ColumnType.DEPLOY_DEV ||
+        t.column === ColumnType.TESTING ||
+        t.column === ColumnType.DEPLOY_PROD
+    ).length;
     const globalProgress = totalTasks === 0 ? 0 : Math.round((globalDone / totalTasks) * 100);
 
     // 3. Expected Progress (Drift)
@@ -66,8 +74,8 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ timeline, tasks, 
                                 <div className="w-full bg-brand-base h-2 rounded-full overflow-hidden border border-brand-light/20">
                                     <div
                                         className={`h-full transition-all duration-700 ease-out ${m.squad === 'UX/UI' ? 'bg-pink-500' :
-                                                m.squad === 'Backend' ? 'bg-blue-400' :
-                                                    m.squad === 'Frontend' ? 'bg-yellow-500' : 'bg-brand-green'
+                                            m.squad === 'Backend' ? 'bg-blue-400' :
+                                                m.squad === 'Frontend' ? 'bg-yellow-500' : 'bg-brand-green'
                                             }`}
                                         style={{ width: `${m.progress}%` }}
                                     />
@@ -84,7 +92,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ timeline, tasks, 
                             <Activity size={18} className="text-brand-green" /> Indicador de Drift
                         </h3>
                         <div className={`flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase transition-colors ${drift >= 0 ? 'bg-brand-green/10 text-brand-green' :
-                                isLagging ? 'bg-red-500/10 text-red-500' : 'bg-yellow-500/10 text-yellow-500'
+                            isLagging ? 'bg-red-500/10 text-red-500' : 'bg-yellow-500/10 text-yellow-500'
                             }`}>
                             {drift >= 0 ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
                             {drift > 0 ? 'Adiantado' : drift < 0 ? 'Atrasado' : 'No Prazo'}
