@@ -27,6 +27,7 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ timeline, tasks, 
     });
 
     // 2. Global Progress (Based on the same "Dev+Test+Prod" logic for consistent dashboard feedback)
+    const totalTasks = tasks.length;
     const globalDone = tasks.filter(t =>
         t.column === ColumnType.DEPLOY_DEV ||
         t.column === ColumnType.TESTING ||
