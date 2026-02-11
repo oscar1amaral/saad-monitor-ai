@@ -12,8 +12,8 @@ interface KanbanBoardProps {
 const COLUMNS = [
   ColumnType.TODO,
   ColumnType.DOING,
-  ColumnType.TESTING,
   ColumnType.DEPLOY_DEV,
+  ColumnType.TESTING,
   ColumnType.DEPLOY_PROD,
 ];
 
