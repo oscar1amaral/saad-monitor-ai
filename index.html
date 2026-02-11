@@ -1,48 +1,54 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SAAD Monitor AI</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              brand: {
-                base: '#00004F',      // Requested Blue
-                surface: '#000068',   // Lighter variant for cards/sidebar
-                light: '#000085',     // Lighter variant for inputs/elements
-                green: '#42C401',     // Requested Green
-                'green-hover': '#36a301',
-                text: '#e2e8f0'       // Light gray text for readability on dark blue
-              }
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAD Monitor AI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              base: '#0D0D0D',      // New Dark Background
+              surface: '#1A1A1A',   // Lighter variant for cards/sidebar
+              light: '#262626',     // Lighter variant for inputs/elements
+              green: '#42C401',     // Requested Green
+              'green-hover': '#36a301',
+              text: '#e2e8f0'       // Light gray text for readability
             }
           }
         }
       }
-    </script>
-    <style>
-      /* Custom scrollbar for dark theme */
-      ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #000035; 
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #000085; 
-        border-radius: 4px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #42C401; 
-      }
-    </style>
-    <script type="module" crossorigin src="/saad-monitor-ai/assets/index-BAwyjeBz.js"></script>
-  </head>
-  <body class="bg-brand-base text-brand-text overflow-hidden">
-    <div id="root"></div>
-  </body>
+    }
+  </script>
+  <style>
+    /* Custom scrollbar for dark theme */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #0D0D0D;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #262626;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #42C401;
+    }
+  </style>
+  <script type="module" crossorigin src="/saad-monitor-ai/assets/index-DhlAGBvI.js"></script>
+</head>
+
+<body class="bg-brand-base text-brand-text overflow-hidden">
+  <div id="root"></div>
+</body>
+
 </html>
