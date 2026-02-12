@@ -228,15 +228,17 @@ const App: React.FC = () => {
           ...proj,
           tasks: proj.tasks.map(t => {
             if (t.id !== taskId) return t;
-            const isCompleted =
-              newColumn === ColumnType.DEPLOY_DEV ||
-              newColumn === ColumnType.TESTING ||
-              newColumn === ColumnType.DEPLOY_PROD;
+            const now = new Date().toISOString();
+            const isHmlg = newColumn === ColumnType.DEPLOY_DEV || newColumn === ColumnType.TESTING;
+            const isProd = newColumn === ColumnType.DEPLOY_PROD;
+            const isEarlyStage = newColumn === ColumnType.TODO || newColumn === ColumnType.DOING;
 
             return {
               ...t,
               column: newColumn,
-              completed_at: isCompleted ? (t.completed_at || new Date().toISOString()) : undefined
+              hmlg_at: isHmlg ? (t.hmlg_at || now) : (isEarlyStage ? undefined : t.hmlg_at),
+              prod_at: isProd ? (t.prod_at || now) : (isEarlyStage ? undefined : t.prod_at),
+              completed_at: (isHmlg || isProd) ? (t.completed_at || now) : (isEarlyStage ? undefined : t.completed_at)
             };
           })
         };
@@ -245,15 +247,20 @@ const App: React.FC = () => {
 
     const task = activeProject?.tasks.find(t => t.id === taskId);
     if (task) {
-      const isCompleted =
-        newColumn === ColumnType.DEPLOY_DEV ||
-        newColumn === ColumnType.TESTING ||
-        newColumn === ColumnType.DEPLOY_PROD;
+      const now = new Date().toISOString();
+      const isHmlg = newColumn === ColumnType.DEPLOY_DEV || newColumn === ColumnType.TESTING;
+      const isProd = newColumn === ColumnType.DEPLOY_PROD;
+      const isEarlyStage = newColumn === ColumnType.TODO || newColumn === ColumnType.DOING;
 
       const updatedTask = {
         ...task,
         column: newColumn,
-        completed_at: isCompleted ? (task.completed_at || new Date().toISOString()) : undefined
+        // Set hmlg_at when entering HMLG stage (if not already set)
+        hmlg_at: isHmlg ? (task.hmlg_at || now) : (isEarlyStage ? undefined : task.hmlg_at),
+        // Set prod_at when entering PROD stage (if not already set)
+        prod_at: isProd ? (task.prod_at || now) : (isEarlyStage ? undefined : task.prod_at),
+        // Keep completed_at for backward compatibility
+        completed_at: (isHmlg || isProd) ? (task.completed_at || now) : (isEarlyStage ? undefined : task.completed_at)
       };
 
       await dataService.upsertTask(activeProjectId, updatedTask);

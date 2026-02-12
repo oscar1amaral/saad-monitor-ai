@@ -14,7 +14,9 @@ export interface Task {
   description?: string;
   column: ColumnType;
   squad?: 'UX/UI' | 'Backend' | 'Frontend' | 'Geral';
-  completed_at?: string; // ISO Date String
+  completed_at?: string; // ISO Date String (deprecated, use hmlg_at/prod_at)
+  hmlg_at?: string; // ISO Date String - when entered DEPLOY_DEV or TESTING
+  prod_at?: string; // ISO Date String - when entered DEPLOY_PROD
 }
 
 export interface ProjectTimeline {
