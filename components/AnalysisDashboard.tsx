@@ -1,6 +1,17 @@
 import React from 'react';
 import { ProjectTimeline, Task, ColumnType } from '../types';
-import { Activity, ShieldAlert, BarChart3, TrendingUp, TrendingDown, Users, Target } from 'lucide-react';
+import { Activity, ShieldAlert, BarChart3, TrendingUp, TrendingDown, Users, Target, Calendar } from 'lucide-react';
+import {
+    LineChart,
+    Line,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ResponsiveContainer,
+    AreaChart,
+    Area
+} from 'recharts';
 
 interface AnalysisDashboardProps {
     timeline: ProjectTimeline | null;
@@ -45,8 +56,115 @@ const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ timeline, tasks, 
     const isLagging = drift < -10;
     const isAtRisk = drift < 0 && drift >= -10;
 
+    // 4. Chart Data Preparation
+    const generateChartData = () => {
+        if (!timeline) return [];
+
+        const data = [];
+        const start = new Date(timeline.startDate);
+
+        for (let i = 1; i <= timeline.totalWeeks; i++) {
+            const weekEnd = new Date(start);
+            weekEnd.setDate(start.getDate() + (i * 7));
+
+            const deliveredInWeek = tasks.filter(t => {
+                if (!t.completed_at) return false;
+                const completedDate = new Date(t.completed_at);
+                return completedDate <= weekEnd;
+            }).length;
+
+            const targetDeliveries = Math.round((i / timeline.totalWeeks) * totalTasks);
+
+            data.push({
+                name: `W${i}`,
+                entregas: deliveredInWeek,
+                meta: targetDeliveries,
+                isCurrent: i === timeline.currentWeek
+            });
+        }
+        return data;
+    };
+
+    const chartData = generateChartData();
+
     return (
         <div className="space-y-6">
+            {/* Chart Section */}
+            <div className="bg-brand-surface p-6 rounded-xl border border-brand-light shadow-lg">
+                <div className="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 className="text-white font-bold flex items-center gap-2">
+                            <BarChart3 size={18} className="text-brand-green" /> Evolução de Entregas
+                        </h3>
+                        <p className="text-xs text-gray-400 mt-1">Comparativo de Meta vs Realizado por Ciclo</p>
+                    </div>
+                    <div className="flex gap-4 text-[10px] font-bold uppercase tracking-wider">
+                        <div className="flex items-center gap-1.5 text-brand-green">
+                            <div className="w-2 h-2 rounded-full bg-brand-green" /> Real
+                        </div>
+                        <div className="flex items-center gap-1.5 text-blue-400">
+                            <div className="w-2 h-2 rounded-full bg-blue-400" /> Meta (Plan)
+                        </div>
+                    </div>
+                </div>
+
+                <div className="h-[300px] w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={chartData}>
+                            <defs>
+                                <linearGradient id="colorEntregas" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#42C401" stopOpacity={0.3} />
+                                    <stop offset="95%" stopColor="#42C401" stopOpacity={0} />
+                                </linearGradient>
+                            </defs>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#262626" vertical={false} />
+                            <XAxis
+                                dataKey="name"
+                                stroke="#525252"
+                                fontSize={12}
+                                tickLine={false}
+                                axisLine={false}
+                            />
+                            <YAxis
+                                stroke="#525252"
+                                fontSize={12}
+                                tickLine={false}
+                                axisLine={false}
+                                tickFormatter={(val) => Math.floor(val)}
+                            />
+                            <Tooltip
+                                contentStyle={{
+                                    backgroundColor: '#1A1A1A',
+                                    border: '1px solid #262626',
+                                    borderRadius: '8px',
+                                    fontSize: '12px'
+                                }}
+                                itemStyle={{ color: '#fff' }}
+                            />
+                            <Area
+                                type="monotone"
+                                dataKey="entregas"
+                                stroke="#42C401"
+                                strokeWidth={3}
+                                fillOpacity={1}
+                                fill="url(#colorEntregas)"
+                                animationDuration={1500}
+                                name="Entregas"
+                            />
+                            <Line
+                                type="monotone"
+                                dataKey="meta"
+                                stroke="#60a5fa"
+                                strokeWidth={2}
+                                strokeDasharray="5 5"
+                                dot={false}
+                                name="Meta"
+                            />
+                        </AreaChart>
+                    </ResponsiveContainer>
+                </div>
+            </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                 {/* Health by Squad Card */}

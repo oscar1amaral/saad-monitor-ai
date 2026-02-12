@@ -226,14 +226,37 @@ const App: React.FC = () => {
         if (proj.id !== activeProjectId) return proj;
         return {
           ...proj,
-          tasks: proj.tasks.map(t => t.id === taskId ? { ...t, column: newColumn } : t)
+          tasks: proj.tasks.map(t => {
+            if (t.id !== taskId) return t;
+            const isCompleted =
+              newColumn === ColumnType.DEPLOY_DEV ||
+              newColumn === ColumnType.TESTING ||
+              newColumn === ColumnType.DEPLOY_PROD;
+
+            return {
+              ...t,
+              column: newColumn,
+              completed_at: isCompleted ? (t.completed_at || new Date().toISOString()) : undefined
+            };
+          })
         };
       })
     );
 
     const task = activeProject?.tasks.find(t => t.id === taskId);
     if (task) {
-      await dataService.upsertTask(activeProjectId, { ...task, column: newColumn });
+      const isCompleted =
+        newColumn === ColumnType.DEPLOY_DEV ||
+        newColumn === ColumnType.TESTING ||
+        newColumn === ColumnType.DEPLOY_PROD;
+
+      const updatedTask = {
+        ...task,
+        column: newColumn,
+        completed_at: isCompleted ? (task.completed_at || new Date().toISOString()) : undefined
+      };
+
+      await dataService.upsertTask(activeProjectId, updatedTask);
     }
   };
 

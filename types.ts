@@ -14,6 +14,7 @@ export interface Task {
   description?: string;
   column: ColumnType;
   squad?: 'UX/UI' | 'Backend' | 'Frontend' | 'Geral';
+  completed_at?: string; // ISO Date String
 }
 
 export interface ProjectTimeline {
